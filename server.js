@@ -8,7 +8,13 @@ dotenv.config();
 app.use(cors());
 app.use(express.json());
 
-let sentMessages = [];
+let sentMessages = [
+    {
+        contact: "firstName lastName",
+        time: new Date(),
+        message: "Hi. Your OTP is: 123456"
+    }
+];
 
 // Get all contacts
 app.get('/api/contacts', (req, res) => {
@@ -27,7 +33,7 @@ app.get('/api/contacts/:id', (req, res) => {
 
 // Send SMS
 app.post('/api/send-message', (req, res) => {
-    const { id, message } = req.body;
+    const { id, message, phone } = req.body;
     const contact = contacts.find(c => c.id == id);
 
     if (!contact) {
@@ -44,13 +50,13 @@ app.post('/api/send-message', (req, res) => {
     client.messages.create({
         body: message,
         from: '+12133220857', // Your Twilio number
-        to: contact.phone
+        to: phone
     }).then(message => {
         console.log("🚀 ~ app.post ~ message:", message);
         sentMessages.push({
             contact: `${contact.firstName} ${contact.lastName}`,
             time: new Date(),
-            otp: otp
+            message: message?.body
         });
         res.json({ message: "SMS sent successfully" });
     }).catch(err => {
