@@ -45,11 +45,12 @@ app.post('/api/send-message', (req, res) => {
 
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const twilioNumber=process.env.TWILIO_NUMBER;
     const client = require('twilio')(accountSid, authToken);
 
     client.messages.create({
         body: message,
-        from: '+12133220857', // Your Twilio number
+        from: twilioNumber, // Your Twilio number
         to: phone
     }).then(message => {
         console.log("🚀 ~ app.post ~ message:", message);
